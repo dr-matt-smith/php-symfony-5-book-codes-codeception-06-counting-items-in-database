@@ -44,6 +44,28 @@ class RecipeCest
         $countAfterInsert = count($recipes);
 
         $I->assertEquals($countAfterInsert, (1 + $countbeforeInsert));
-
     }
+
+    public function randomValueInDbAfterInset(AcceptanceTester $I)
+    {
+        // (1) Arrange
+        $randomNumber = rand(1, 100);
+        // e.g. 'cheesecake99'
+        $randomRecipeTitle = "cheesecake" . $randomNumber;
+
+        // (2) Act
+        $I->amOnPage('/recipe/new');
+        $I->fillField('#recipe_title', $randomRecipeTitle);
+        $I->fillField('#recipe_steps', 'buy packet - follow instructions');
+        $I->fillField('#recipe_time', 60);
+
+        $I->click('Save');
+
+        // (3) Assert
+        $I->seeInRepository('App\Entity\Recipe', [
+            'title' => $randomRecipeTitle
+        ]);
+    }
+
+
 }
